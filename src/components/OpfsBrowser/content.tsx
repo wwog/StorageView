@@ -25,7 +25,7 @@ export const Content: FC<ContentProps> = (props) => {
 
   return (
     <div
-      className="h-full w-full p-4 flex flex-wrap gap-4"
+      className="h-full w-full p-4 flex flex-wrap gap-3"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           setSelectedItem(null);
@@ -38,19 +38,24 @@ export const Content: FC<ContentProps> = (props) => {
           const isDirectory = item.kind === "directory";
           const isSelected = selectedItem === item.name;
           return (
-            <div key={item.name}>
+            <div
+              key={item.name}
+              className={clsx("w-32 rounded", {
+                "bg-blue-100": isSelected,
+              })}
+            >
               <div
-                key={item.name}
                 className={clsx(
-                  "px-6 flex flex-col items-center justify-center border rounded",
-                  isDirectory ? "hover:bg-blue-50" : "",
-                  isSelected ? "bg-blue-100" : ""
+                  "px-6 flex flex-col items-center justify-center ",
+                  isDirectory ? "hover:bg-blue-50" : ""
                 )}
                 onClick={() => handleItemClick(item)}
                 onDoubleClick={() => handleItemDoubleClick(item)}
               >
                 <div className="text-[52px]">{isDirectory ? "📁" : "📄"}</div>
               </div>
+
+              <div className="text-center">{item.name.slice(-6)}</div>
             </div>
           );
         }}
