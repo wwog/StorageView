@@ -1,0 +1,3 @@
+SideTabBar
+FileBrowser
+SqliteViewer
