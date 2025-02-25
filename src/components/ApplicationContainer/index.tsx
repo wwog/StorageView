@@ -1,20 +1,32 @@
 import { FC } from "react";
 import React from "react";
-import { useApplicationInstances, useActiveApplicationInstance, useApplications } from "../../store/applications";
+import {
+  useApplicationInstances,
+  useActiveApplicationInstance,
+  useApplications,
+} from "../../store/applications";
 import { clsx } from "../../utils";
 
 export const ApplicationContainer: FC = () => {
-  const [applicationInstances, setApplicationInstances] = useApplicationInstances();
-  const [activeInstanceId, setActiveInstanceId] = useActiveApplicationInstance();
+  const [applicationInstances, setApplicationInstances] =
+    useApplicationInstances();
+  const [activeInstanceId, setActiveInstanceId] =
+    useActiveApplicationInstance();
   const [applications] = useApplications();
 
   const closeInstance = (instanceId: string) => {
-    setApplicationInstances((prev) => prev.filter((instance) => instance.id !== instanceId));
+    setApplicationInstances((prev) =>
+      prev.filter((instance) => instance.id !== instanceId)
+    );
     if (activeInstanceId === instanceId) {
       // 如果关闭的是当前活跃的实例，则激活最后一个实例
-      const remainingInstances = applicationInstances.filter((instance) => instance.id !== instanceId);
+      const remainingInstances = applicationInstances.filter(
+        (instance) => instance.id !== instanceId
+      );
       if (remainingInstances.length > 0) {
-        setActiveInstanceId(remainingInstances[remainingInstances.length - 1].id);
+        setActiveInstanceId(
+          remainingInstances[remainingInstances.length - 1].id
+        );
       } else {
         setActiveInstanceId(null);
       }
@@ -37,13 +49,17 @@ export const ApplicationContainer: FC = () => {
     ? applications.find((app) => app.id === activeInstance.applicationId)
     : null;
 
+  console.log(activeInstance, application, applicationInstances);
+
   return (
     <div className="h-full w-full flex flex-col">
       {/* 标签栏 */}
       <div className="flex-none h-10 bg-[#f5f5f5] border-b border-gray-200 flex items-center">
         <div className="flex-1 flex items-center overflow-x-auto">
           {applicationInstances.map((instance) => {
-            const app = applications.find((a) => a.id === instance.applicationId);
+            const app = applications.find(
+              (a) => a.id === instance.applicationId
+            );
             const isActive = instance.id === activeInstanceId;
 
             return (
@@ -60,7 +76,9 @@ export const ApplicationContainer: FC = () => {
                 <button
                   className={clsx(
                     "ml-2 p-1 rounded-full hover:bg-gray-200",
-                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    isActive
+                      ? "opacity-100"
+                      : "opacity-0 group-hover:opacity-100"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -92,4 +110,4 @@ export const ApplicationContainer: FC = () => {
       )}
     </div>
   );
-}; 
+};

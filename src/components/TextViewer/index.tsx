@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import type { ApplicationProps } from "../../types/application";
+import { normalizePath } from "../../utils/opfs/utils";
 
 export const TextViewer: FC<ApplicationProps> = ({ filePath }) => {
   const [content, setContent] = useState<string>("");
@@ -12,7 +13,10 @@ export const TextViewer: FC<ApplicationProps> = ({ filePath }) => {
         setLoading(true);
         setError(null);
         const root = await navigator.storage.getDirectory();
-        const fileHandle = await root.getFileHandle(filePath, {
+        // 规范化路径，移除开头的斜杠
+        const normalizedPath = normalizePath(filePath).replace(/^\//, '');
+        console.log('Trying to open file:', normalizedPath);
+        const fileHandle = await root.getFileHandle(normalizedPath, {
           create: false,
         });
 
@@ -20,6 +24,7 @@ export const TextViewer: FC<ApplicationProps> = ({ filePath }) => {
         const text = await file.text();
         setContent(text);
       } catch (err) {
+        console.error('Error loading file:', err);
         setError(err instanceof Error ? err.message : "加载文件失败");
       } finally {
         setLoading(false);

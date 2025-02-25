@@ -7,17 +7,21 @@ import { ApplicationContainer } from "./components/ApplicationContainer";
 import { ApplicationManager } from "./store/applications";
 import { textViewerApp } from "./applications/text-viewer";
 import { useEffect } from "react";
+import { useApplications } from "./store/applications";
 
 const supportedOpfs = isOPFSSupported();
 
 function App() {
   const [sizes, setSizes] = useLocalStorage("sizes", [2, 2.5]);
+  const [, setApplications] = useApplications();
 
   useEffect(() => {
     // 注册应用
     const appManager = ApplicationManager.getInstance();
+    // 设置更新函数
+    appManager.setUpdateFunction(setApplications);
     appManager.registerApplication(textViewerApp);
-  }, []);
+  }, [setApplications]);
 
   if (supportedOpfs === false) {
     return <div>Opfs,Not Support Opfs!</div>;

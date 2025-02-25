@@ -26,6 +26,7 @@ export const useActiveApplicationInstance = () => {
 export class ApplicationManager {
   private static instance: ApplicationManager;
   private applications: Application[] = [];
+  private setApplications: ((apps: Application[]) => void) | null = null;
 
   private constructor() {}
 
@@ -36,10 +37,19 @@ export class ApplicationManager {
     return ApplicationManager.instance;
   }
 
+  // 设置更新函数
+  setUpdateFunction(setter: (apps: Application[]) => void) {
+    this.setApplications = setter;
+  }
+
   // 注册新应用
   registerApplication(application: Application) {
     if (!this.applications.find(app => app.id === application.id)) {
       this.applications.push(application);
+      // 更新 Jotai atom 状态
+      if (this.setApplications) {
+        this.setApplications([...this.applications]);
+      }
     }
   }
 
