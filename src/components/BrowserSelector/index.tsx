@@ -12,16 +12,6 @@ export const BrowserSelector: FC = () => {
         selected={browserType === BrowserType.opfs}
         onClick={setBrowserType}
       />
-      <BrowserItem
-        browserType={BrowserType.localStorage}
-        selected={browserType === BrowserType.localStorage}
-        onClick={setBrowserType}
-      />
-      <BrowserItem
-        browserType={BrowserType.sessionStorage}
-        selected={browserType === BrowserType.sessionStorage}
-        onClick={setBrowserType}
-      />
     </div>
   );
 };
@@ -74,47 +64,7 @@ const getStorageIcon = (browserType: BrowserType, selected: boolean) => {
           />
         </svg>
       );
-    case BrowserType.localStorage:
-      return (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z"
-            stroke={color}
-            strokeWidth="2"
-          />
-          <path d="M8 8H16V16H8V8Z" stroke={color} strokeWidth="2" />
-          <path d="M12 8V16" stroke={color} strokeWidth="2" />
-        </svg>
-      );
-    case BrowserType.sessionStorage:
-      return (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z"
-            stroke={color}
-            strokeWidth="2"
-          />
-          <path d="M8 8H16V16H8V8Z" stroke={color} strokeWidth="2" />
-          <path d="M8 12H16" stroke={color} strokeWidth="2" />
-          <path
-            d="M12 16L12 8"
-            stroke={color}
-            strokeWidth="2"
-            strokeDasharray="2 2"
-          />
-        </svg>
-      );
+    default:
+      return null;
   }
 };

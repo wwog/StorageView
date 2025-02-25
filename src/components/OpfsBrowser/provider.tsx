@@ -32,24 +32,32 @@ export const OpfsBrowserProvider: React.FC<{ children: React.ReactNode }> = ({
     initOpfsBrowser();
   }, []);
 
-  const goTo = (path: string[], joinCurrent: boolean = false) => {
-    opfsBrowser?.goTo(path, joinCurrent);
+  const goTo = async (path: string[], joinCurrent: boolean = false) => {
+    await opfsBrowser?.goTo(path, joinCurrent);
   };
 
-  const goBack = () => {
-    opfsBrowser?.goBack();
+  const goBack = async () => {
+    await opfsBrowser?.goBack();
   };
 
-  const test = () => {
-    opfsBrowser?.test();
+  const test = async () => {
+    await opfsBrowser?.test();
   };
 
-  const refresh = () => {
-    opfsBrowser?.refresh();
+  const refresh = async () => {
+    await opfsBrowser?.refresh();
   };
 
-  const goToRoot = () => {
-    opfsBrowser?.goToRoot();
+  const goToRoot = async () => {
+    await opfsBrowser?.goToRoot();
+  };
+
+  const goToByPath = async (path: string, joinCurrent: boolean = false) => {
+    await opfsBrowser?.goToByPath(path, joinCurrent);
+  };
+
+  const deleteByPaths = async (paths: string[]) => {
+    await opfsBrowser?.deleteByPaths(paths);
   };
 
   return (
@@ -61,10 +69,12 @@ export const OpfsBrowserProvider: React.FC<{ children: React.ReactNode }> = ({
         currentDirItems,
         canGoBack,
         goTo,
+        goToByPath,
         goBack,
         test,
         refresh,
         goToRoot,
+        deleteByPaths,
       }}
     >
       {children}

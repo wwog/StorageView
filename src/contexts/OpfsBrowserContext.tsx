@@ -2,7 +2,7 @@ import { createContext } from "react";
 import type { OpfsNode } from "../utils/opfs/types";
 import { Emitter } from "../utils/event";
 import { createOpfsBridge, type OpfsBridge } from "../utils/opfs/bridge";
-import { formatPath } from "../components/OpfsBrowser/utils";
+import { formatPath, pathToArr } from "../components/OpfsBrowser/utils";
 
 export class OpfsBrowser {
   private static instance: OpfsBrowser;
@@ -52,7 +52,7 @@ export class OpfsBrowser {
 
   public refresh = async () => {
     this.currentDirItems = await this.opfsBridge.getDirectorySnapshot(
-      this.currentPath.join("/")
+      formatPath(this.currentPath)
     );
     this._onCurrentDirItemsChange.fire(this.currentDirItems);
   };
@@ -64,14 +64,27 @@ export class OpfsBrowser {
       this.currentPath = path;
     }
     this.currentDirItems = await this.opfsBridge.getDirectorySnapshot(
-      formatPath(path)
+      formatPath(this.currentPath)
     );
     this._onCurrentDirItemsChange.fire(this.currentDirItems);
     this._onCurrentPathChange.fire(this.currentPath);
   };
 
+  public goToByPath = async (path: string, joinCurrent = false) => {
+    await this.goTo(pathToArr(path), joinCurrent);
+  };
+
   public goToRoot = async () => {
     await this.goTo(["/"]);
+  };
+
+  public deleteByPaths = async (paths: string[]) => {
+    for (const path of paths) {
+      await this.opfsBridge.remove(path, {
+        recursive: true,
+      });
+    }
+    await this.refresh();
   };
 
   public goBack = async () => {
@@ -88,11 +101,13 @@ interface OpfsBrowserContextType {
   currentPath: string[];
   currentDirItems: OpfsNode[];
   canGoBack: boolean;
-  goTo: (path: string[], joinCurrent?: boolean) => void;
-  goBack: () => void;
-  test: () => void;
-  refresh: () => void;
-  goToRoot: () => void;
+  goTo: (path: string[], joinCurrent?: boolean) => Promise<void>;
+  goToByPath: (path: string, joinCurrent?: boolean) => Promise<void>;
+  goBack: () => Promise<void>;
+  test: () => Promise<void>;
+  refresh: () => Promise<void>;
+  goToRoot: () => Promise<void>;
+  deleteByPaths: (paths: string[]) => Promise<void>;
 }
 
 export const OpfsBrowserContext = createContext<OpfsBrowserContextType | null>(
