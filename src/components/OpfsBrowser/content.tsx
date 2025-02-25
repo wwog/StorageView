@@ -6,15 +6,46 @@ import { MarqueeSelection } from "../MarqueeSelection";
 import type { OpfsNode } from "../../utils/opfs/types";
 import { List } from "../List";
 import { Truncate } from "../TextTruncate";
+import { ApplicationManager } from "../../store/applications";
+import { useApplicationInstances, useActiveApplicationInstance } from "../../store/applications";
 
 export const Content: FC = () => {
   const { currentDirItems, goToByPath, deleteByPaths } = useOpfsBrowser();
+  const [, setApplicationInstances] = useApplicationInstances();
+  const [, setActiveInstanceId] = useActiveApplicationInstance();
 
   const openItem = (item: OpfsNode) => {
     if (item.kind === "directory") {
       goToByPath(item.path);
     } else {
-      alert("open file not supported");
+      const fileType = item.name.split(".").pop() || "";
+      const applications =
+        ApplicationManager.getInstance().getApplicationsByFileType(fileType);
+
+      if (applications.length > 0) {
+        // 使用第一个支持的应用打开文件
+        const application = applications[0];
+        const newInstanceId = crypto.randomUUID();
+        
+        // 更新应用实例列表
+        setApplicationInstances((prev) => [
+          ...prev,
+          {
+            id: newInstanceId,
+            applicationId: application.id,
+            fileId: item.path,
+            filePath: item.path,
+            fileName: item.name,
+            fileType,
+            active: true,
+          },
+        ]);
+
+        // 设置新实例为活跃实例
+        setActiveInstanceId(newInstanceId);
+      } else {
+        alert("No application supports this file type");
+      }
     }
   };
 
@@ -66,12 +97,12 @@ export const Content: FC = () => {
             <div
               key={item.name}
               data-node={JSON.stringify(item)}
-              className={clsx("w-38 p-2 rounded")}
+              className={clsx("w-34 p-2 rounded")}
             >
               <div
                 className={clsx("flex flex-col items-center justify-center")}
               >
-                <div className="text-[56px]">{isDirectory ? "📁" : "📄"}</div>
+                <div className="text-[48px]">{isDirectory ? "📁" : "📄"}</div>
               </div>
               <Truncate
                 suffixMinLength={7}

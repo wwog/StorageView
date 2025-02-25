@@ -1,18 +1,23 @@
 import { Allotment } from "allotment";
-import { BrowserSelector } from "./components/BrowserSelector";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { useBrowserType } from "./store";
-import { SwitchRender } from "./components/RenderUtils/SwitchRender";
-import { BrowserType } from "./constant";
 import { OpfsBrowser } from "./components/OpfsBrowser";
 import { isOPFSSupported } from "./utils/opfs/utils";
 import { OpfsBrowserProvider } from "./components/OpfsBrowser/provider";
+import { ApplicationContainer } from "./components/ApplicationContainer";
+import { ApplicationManager } from "./store/applications";
+import { textViewerApp } from "./applications/text-viewer";
+import { useEffect } from "react";
 
 const supportedOpfs = isOPFSSupported();
 
 function App() {
-  const [browserType] = useBrowserType();
-  const [sizes, setSizes] = useLocalStorage("sizes", [1, 3]);
+  const [sizes, setSizes] = useLocalStorage("sizes", [2, 2.5]);
+
+  useEffect(() => {
+    // 注册应用
+    const appManager = ApplicationManager.getInstance();
+    appManager.registerApplication(textViewerApp);
+  }, []);
 
   if (supportedOpfs === false) {
     return <div>Opfs,Not Support Opfs!</div>;
@@ -26,25 +31,15 @@ function App() {
         setSizes(sizes, true);
       }}
     >
-      <Allotment.Pane snap minSize={180} maxSize={280}>
+      <Allotment.Pane snap minSize={300} maxSize={720} preferredSize={410}>
         <div className="h-full bg-[#dfe1e2ea]">
-          <BrowserSelector />
+          <OpfsBrowserProvider>
+            <OpfsBrowser />
+          </OpfsBrowserProvider>
         </div>
       </Allotment.Pane>
       <Allotment.Pane>
-        <div className="h-full ">
-          <SwitchRender value={browserType}>
-            <SwitchRender.Case value={BrowserType.opfs}>
-              <OpfsBrowserProvider>
-                <OpfsBrowser />
-              </OpfsBrowserProvider>
-            </SwitchRender.Case>
-
-            <SwitchRender.Default>
-              <div>Oops, 暂未支持</div>
-            </SwitchRender.Default>
-          </SwitchRender>
-        </div>
+        <ApplicationContainer />
       </Allotment.Pane>
     </Allotment>
   );
