@@ -60,6 +60,10 @@ export const OpfsBrowserProvider: React.FC<{ children: React.ReactNode }> = ({
     await opfsBrowser?.deleteByPaths(paths);
   };
 
+  const mkdir = async (path: string, options: { recursive: boolean }) => {
+    await opfsBrowser?.mkdir(path, options);
+  };
+
   return (
     <OpfsBrowserContext.Provider
       value={{
@@ -75,6 +79,7 @@ export const OpfsBrowserProvider: React.FC<{ children: React.ReactNode }> = ({
         refresh,
         goToRoot,
         deleteByPaths,
+        mkdir,
       }}
     >
       {children}

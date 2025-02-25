@@ -1,4 +1,4 @@
-import { LRUCache } from "../../utils/LRUCache";
+import { LRUCache } from "../../utils/lruCache";
 
 export function formatPath(path: string[]) {
   //如果第一个是空或者'/'，则去掉

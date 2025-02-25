@@ -22,7 +22,6 @@ const render = (options: TruncateRenderOptions) => {
   const { node, text, ellipsis = "...", suffixMinLength = 5 } = options;
   const style = window.getComputedStyle(node);
   const width = parseFloat(style.width);
-  console.log("fix::node-width", width);
   const fontSize = parseFloat(style.fontSize);
   const textWidth = getTextWidth(text, style.font);
 

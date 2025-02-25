@@ -10,9 +10,10 @@ export class OpfsBrowser {
   static async getInstance() {
     if (!OpfsBrowser.instance) {
       const opfs = await createOpfsBridge();
-      const items = await opfs.getDirectorySnapshot("/");
       OpfsBrowser.instance = new OpfsBrowser(opfs);
-      OpfsBrowser.instance.currentDirItems = items;
+      OpfsBrowser.instance.currentDirItems = await opfs.getDirectorySnapshot(
+        "/"
+      );
     }
     return OpfsBrowser.instance;
   }
@@ -93,6 +94,11 @@ export class OpfsBrowser {
       await this.goTo(this.currentPath);
     }
   };
+
+  public mkdir = async (path: string, options: { recursive: boolean }) => {
+    await this.opfsBridge.mkdir(path, options);
+    await this.refresh();
+  };
 }
 
 interface OpfsBrowserContextType {
@@ -108,6 +114,7 @@ interface OpfsBrowserContextType {
   refresh: () => Promise<void>;
   goToRoot: () => Promise<void>;
   deleteByPaths: (paths: string[]) => Promise<void>;
+  mkdir: (path: string, options: { recursive: boolean }) => Promise<void>;
 }
 
 export const OpfsBrowserContext = createContext<OpfsBrowserContextType | null>(

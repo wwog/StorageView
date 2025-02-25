@@ -37,9 +37,8 @@ async function sendMessage(method: string, args: any[]): Promise<any> {
 
 export async function createOpfsBridge() {
   if (!initialized) {
-    initialized = true;
-//todo trycatch 
     await sendMessage("init", []);
+    initialized = true;
   }
   return {
     getDirectorySnapshot: async (path: string): Promise<OpfsNode[]> => {

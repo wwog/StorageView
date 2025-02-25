@@ -3,7 +3,7 @@ import { Button } from "../Input/button";
 import { useOpfsBrowser } from "../../hooks/useOpfsBrowser";
 
 export const Header: FC = () => {
-  const { currentPath, opfsBrowser, canGoBack } = useOpfsBrowser();
+  const { currentPath, opfsBrowser, canGoBack, mkdir } = useOpfsBrowser();
   const handleRefresh = () => {
     opfsBrowser?.refresh();
   };
@@ -11,7 +11,7 @@ export const Header: FC = () => {
   const handleNewFolder = async () => {
     const newFolderName = prompt("请输入文件夹名称");
     if (!newFolderName) return;
-    await opfsBrowser?.opfsBridge.mkdir(newFolderName, {
+    await mkdir(newFolderName, {
       recursive: true,
     });
   };
